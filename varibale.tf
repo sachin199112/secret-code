@@ -29,9 +29,9 @@ variable "org_trail" {
   type        = string
 }
 
-variable "key_deletion_window_in_days" {
+variable "emailid" {
   description = "Duration in days after which the key is deleted after destruction of the resource, must be 7-30 days.  Default 30 days."
-  default     = 30
+  default     = "sachin.kapoor1991@gmail.com"
   type        = string
 }
 
@@ -49,6 +49,12 @@ variable "lambda_function_name" {
 variable "iam_role_name" {
   description = "Name for the CloudTrail IAM role"
   default     = "secret-event-cloudtrail-cloudwatch-logs-role"
+  type        = string
+}
+
+variable "iam_role_name_for_lambda" {
+  description = "Name for the CloudTrail IAM role"
+  default     = "secret-event-lambda-role"
   type        = string
 }
 

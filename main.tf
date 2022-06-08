@@ -56,7 +56,7 @@ resource "aws_sns_topic" "secret-event-sns-topic" {
 resource "aws_sns_topic_subscription" "user_updates_sqs_target" {
   topic_arn = aws_sns_topic.secret-event-sns-topic.arn
   protocol  = "email-json"
-  endpoint  = "sachin.kapoor1991@gmail.com"
+  endpoint  = var.emailid
 }
 #
 # CloudTrail - CloudWatch
@@ -87,7 +87,6 @@ resource "aws_iam_role" "cloudtrail_cloudwatch_role" {
 resource "aws_cloudwatch_log_group" "cloudtrail" {
   name              = var.cloudwatch_log_group_name
   retention_in_days = var.log_retention_days
-  #kms_key_id        = aws_kms_key.cloudtrail.arn
   tags              = var.tags
 }
 
@@ -157,7 +156,7 @@ resource "aws_iam_role_policy" "lambda-policy" {
         {
             "Effect": "Allow",
             "Action": "logs:CreateLogGroup",
-            "Resource": "arn:aws:logs:us-east-1:695292474035:*"
+            "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
         },
         {
             "Effect": "Allow",
@@ -166,7 +165,7 @@ resource "aws_iam_role_policy" "lambda-policy" {
                 "logs:PutLogEvents"
             ],
             "Resource": [
-                "arn:aws:logs:us-east-1:695292474035:log-group:/aws/lambda/${aws_lambda_function.secret-events-lambda.function_name}:*"
+                "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.secret-events-lambda.function_name}:*"
             ]
         },
         {
@@ -181,7 +180,7 @@ resource "aws_iam_role_policy" "lambda-policy" {
   })
 }
 resource "aws_iam_role" "default" {
-  name = "sachin-secret-iam_for_lambda_called_from_cloudwatch_logs"
+  name = var.iam_role_name_for_lambda
   
   assume_role_policy = <<EOF
 {
